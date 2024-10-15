@@ -8,7 +8,7 @@ importFrom("graphics", "abline", "lines")
 importFrom("stats", "as.formula", "coef", "family", "formula",
            "gaussian", "logLik", "model.frame", "model.response",
            "na.omit", "predict", "residuals", "terms")
-
+importFrom("utils", "modifyList")
 
 S3method(VarCorr,glmermboost)
 S3method(VarCorr,mermboost)
