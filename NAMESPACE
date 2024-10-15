@@ -1,0 +1,27 @@
+import(mboost)
+import(parallel)
+import(stabs)
+import(lme4)
+import(Matrix)
+
+importFrom("graphics", "abline", "lines")
+importFrom("stats", "as.formula", "coef", "family", "formula",
+           "gaussian", "logLik", "model.frame", "model.response",
+           "na.omit", "predict", "residuals", "terms")
+
+
+S3method(VarCorr,glmermboost)
+S3method(VarCorr,mermboost)
+S3method(as.Family,merMod)
+S3method(model.matrix,merFamily)
+S3method(mstop,mer_cv)
+S3method(plot,mer_cv)
+S3method(predict,glmermboost)
+S3method(predict,mermboost)
+S3method(ranef,glmermboost)
+S3method(ranef,mermboost)
+
+export(find_ccc)
+export(glmermboost)
+export(mer_cvrisk)
+export(mermboost)
