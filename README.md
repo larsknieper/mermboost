@@ -27,24 +27,37 @@ The boosting functions are wrappers of the corresponding \textit{mboost} functio
 
 To call the boosting functions some modifications are needed in comparison to \textit{mboost}. The random effects are not specified within the base-learner \texttt{brandom()} anymore but in the way they are specified in \textit{lme4} (and other mixed model packages) by "\texttt{... + (random formula | id)}". By this, the add-on package differs visually from the \textit{mboost} package even though this leads to a mixed formula format. Thus, to estimate a specified model formulation of $\boldsymbol{\eta} = \beta_0 + \beta_1 \boldsymbol{x}_1 + \beta_2 \boldsymbol{x}_2 + \boldsymbol{\gamma}_0$ for a binomial distributed response variable $\boldsymbol{y}$ with a cluster specifying \textit{id} the differences are as follows:
 
-| Library      | Code                                            |
-|--------------|-------------------------------------------------|
-| *mboost:*    | `mboost(y ~ bols(x1) + bols(x2) + brandom(id),` |
-|              | `family = Binomial(type = "glm"))`              |
-|              |                                                 |
-| *mermboost:* | `glmerboost(y ~ x1 + x2 + (1 | id),`            |
-|              | `family = binomial)`                            |
+### mboost
+
+``` r
+mboost(y ~ bols(x1) + bols(x2) + brandom(id),
+        family = Binomial(type = "glm"),
+        data = df)
+```
+
+### mermboost
+
+``` r
+glmerboost(y ~ x1 + x2 + (1 | id),,
+            family = binomial(),
+            data = df)
+```
 
 To clarify this even further, assume a GAMM with an additional random slope defined as $\boldsymbol{\eta} = f_1 (\boldsymbol{x}_1) + f_2 (\boldsymbol{x}_2) + \boldsymbol{\gamma}_0 + \boldsymbol{\gamma}_1 \boldsymbol{z}_2$, where $\boldsymbol{x}_2 = \boldsymbol{z}_2$. The corresponding models are to be called as follows without consideration of possible adjustments within \texttt{bbs()}:
 
-| Library      | Code                                  |
-|--------------|---------------------------------------|
-| *mboost:*    | `mboost(y ~ bbs(x1) + bbs(x2) +`      |
-|              | `brandom(id) + brandom(id, by = x2),` |
-|              | `family = Binomial(type = "glm"))`    |
-|              |                                       |
-| *mermboost:* | `mermboost(y ~ bbs(x1) + bbs(x2) +`   |
-|              | `(1 + x2 | id), family = binomial)`   |
+### mboost
+
+``` r
+mboost(y ~ bbs(x1) + bbs(x2) + brandom(id) + brandom(id, by = x2),
+        family = Binomial(type = "glm"), data = df)
+```
+
+### mermboost
+
+``` r
+mermboost(y ~ bbs(x1) + bbs(x2) + (1 + x2 | id), 
+          family = binomial(), data = df)
+```
 
 Some methods of functions got adjusted to, where \texttt{predict()} is considering the nuisance estimations and therefore the random effects as well. With the argument \texttt{RE} it can be controlled whether to include random effects (\texttt{TRUE}) or not (\texttt{FALSE}).
 
