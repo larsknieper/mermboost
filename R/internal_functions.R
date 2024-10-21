@@ -1,34 +1,57 @@
-check_data <- function(data, id, formula) {
-  # Iterate through the columns and convert logical columns
-  data[] <- lapply(data, function(x) {
-    if (is.logical(x)) {
-      return(as.integer(x))  # Convert TRUE to 1 and FALSE to 0
-      message("Turned a logical into numeric.")
-    } else {
-      return(x)  # Leave non-logical columns unchanged
-    }
-  })
 
-  rel_vars <- all.vars(formula[[3]])[which(all.vars(formula[[3]]) != id)]
-  data_rel <- data[rel_vars]
-  # Check if all columns, except the specified one, are numeric
-  numeric_test <- all(sapply(data_rel[, !names(data_rel) %in% id], is.numeric))
-  if (!numeric_test) {
-    stop("Please make sure your covariates are numeric.")
+
+create_X <- function(data, variables) {
+  rel_data <- as.data.frame(data[, variables])
+  
+  if (any(is.na(rel_data))) {
+    stop("NA-handling not implemented yet")
   }
-
-  return(data)
+  
+  if (any(unlist(lapply(rel_data, class))== "character")) {
+    message("There are character variables - 
+            if these are relevant, this might cause an upcoming error.")
+  }
+  
+  
+  # Identify logical and factor variables
+  logical_vars <- sapply(rel_data, is.logical)
+  factor_vars <- sapply(rel_data, is.factor)
+  
+  # Convert logical variables to binary (0/1)
+  if (any(logical_vars)) {
+    rel_data[, names(logical_vars)[logical_vars]] <- 
+      lapply(rel_data[, names(logical_vars)[logical_vars]], as.integer)
+  }
+  
+  # Convert factor variables to binary (0/1), different handling when only two levels
+  for (var in names(factor_vars)[factor_vars]) {
+    levels_count <- nlevels(rel_data[[var]])
+    
+    # If factor has exactly 2 levels, convert it to a binary (0/1) column
+    if (levels_count == 2) {
+      rel_data[[var]] <- as.integer(rel_data[[var]] == levels(rel_data[[var]])[2])  # Compare to the second level
+    }
+    
+    # If factor has more than 2 levels, apply fastDummies
+    else if (levels_count > 2) {
+      rel_data <- fastDummies::dummy_cols(rel_data, 
+                                          select_columns = var, 
+                                          remove_selected_columns = TRUE)
+    }
+  }
+  
+  X <- as.matrix(rel_data)
+  return(X)
 }
 
 
 organise_random <- function(formula, data, model) {
-
+  
   formula_random <- lme4::findbars(formula) # extract random formula
 
   # random parts list
   ran_parts <- list()
   ran_parts$id <- all.vars(formula_random[[1]][[3]]) # id variable
-
   data[ran_parts$id] <- as.factor(unlist(data[ran_parts$id]))
   if(class(unlist(data[ran_parts$id])) != "factor") {
     stop("Please turn the id into a factor.")
@@ -144,8 +167,13 @@ build_C <- function(data, X, ran_parts) {
     if (!single_value_check) {
       Xcc <- cbind(1, X[first,ccc])
     }
-
-    Xcor[[1]] <- Xcc %*% solve(crossprod(Xcc)) %*% t(Xcc)
+    
+    cp_Xcc <- crossprod(Xcc)
+    if (kappa(cp_Xcc) > 1e12) {
+      Xcor[[1]] <- Xcc %*% MASS::ginv(cp_Xcc) %*% t(Xcc)
+    } else {
+      Xcor[[1]] <- Xcc %*% solve(cp_Xcc) %*% t(Xcc)
+    }
   }
 
   if(q > length(Xcor)) {
@@ -195,7 +223,6 @@ build_Z <- function(Z0, data, id) {
   for (i in 1:n) {
     Z[[i]] <- as.matrix(Z0[id_num == un_id[i],])
   }
-  #Z <<- Z
   Z <- Matrix::bdiag(Z)
 
   return(Z)

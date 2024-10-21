@@ -3,6 +3,8 @@ import(parallel)
 import(stabs)
 import(lme4)
 import(Matrix)
+import(fastDummies)
+import(MASS)
 
 importFrom("graphics", "abline", "lines")
 importFrom("stats", "as.formula", "coef", "family", "formula",

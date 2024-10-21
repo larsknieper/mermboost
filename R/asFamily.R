@@ -28,18 +28,17 @@ as.Family.merMod <- function(object, ran_parts) {
   Z0 <- ran_parts$Z0
   C <- ran_parts$Cm
   Z <- ran_parts$Z
-
+  
   # object is an intercept object
   model <- object
-
+  
   rf_orig <- lme4::ranef(model)[[id]]
   rf <- matrix(C %*% as.vector(t(rf_orig)), ncol = q, byrow = T)
-
+  
   ff <- lme4::fixef(model)
   theta <- lme4::getME(model, "theta")
   Q <- lme4::VarCorr(model)
   name_of_fe <- "fixef"
-
   cl <- object@call
   ffm <- formula(object)
   env <- .copy_variables(cl, environment(ffm), ran_parts)
@@ -54,7 +53,7 @@ as.Family.merMod <- function(object, ran_parts) {
   fun <- gsub("^lme4::", "", deparse(cl[[1L]]))
   stopifnot(fun %in% c("lmer", "glmer"))
   fun <- gsub("er$", "", fun)
-
+  
   cl[[1L]] <- as.name(fun)
   environment(cl$formula) <- env
   m0 <- eval(cl, envir = env)

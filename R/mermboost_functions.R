@@ -7,28 +7,35 @@ glmermboost <- function(formula, data = list(),
                         oobweights = NULL, ...) {
 
   data <- as.data.frame(data)
-
+  
   if (!class(family) == "boost_family") {
-    # Standardize the family input
+    # Standardize the family input; if condition since accepting NBinomial
     family <- switch(
       class(family)[1],
-      "character" = get(family),           # If a string is passed, get the family function (e.g., "binomial" -> binomial)
-      "function" = family(),               # If the function itself is passed (e.g., binomial), call it to get a family object
-      "family" = family,                   # If a family object is already passed (e.g., binomial()), just use it
-      stop("Invalid family argument")      # Throw an error for invalid input
+      "character" = get(family),
+      "function" = family(),
+      "family" = family,
+      stop("Invalid family argument")
     )
+    
+    if (inherits(family, "family") && family$family == "Gamma") {
+      if (family$link == "inverse") {
+        family <- Gamma(link = "log")
+        message("Turned into log-link since inverse-link has problems concerning risk and gradient calculations.")
+      }
+    }
   }
-
+  
   randoms <- organise_random(formula = formula, data = data, model = "glmm")
   data <- randoms$data
   ran_parts <- randoms$ran_parts
   ran_parts$family <- eval(family)
 
-  data <- check_data(data, ran_parts$id, formula = formula)
-
   # organise fixed effects
   formula_fix <- lme4::nobars(formula) # extract fix formula
-  X <- data.matrix(data[,labels(terms(formula_fix))])
+  vars <- all.vars(formula_fix[[3]])
+  
+  X <- create_X(data, vars)
 
   # build correction matrix C
   Cm <- build_C(data = data, X = X, ran_parts = ran_parts)
@@ -50,19 +57,26 @@ glmermboost <- function(formula, data = list(),
 
   #model$X <- extract(model, what = "design")
   coef_names <- sub("[A-Z]+$", "", names(coef(model)))
-
-  X_ch <<- model$model.frame()[coef_names]
-
-  # Identify logical columns,
-  # Convert logical values to 1s and 0s
-  logical_columns <- apply(X_ch, 2, is.logical)
-  X_ch[, logical_columns] <- X_ch[, logical_columns] + 0
-  if (control$mstop != 0) {
-    int <- model$nuisance()[[control$mstop]]$ff - sum(coef(model) * colMeans(X_ch))
-    model$intercept <- int
+  
+  
+  # intercept calculation due to centering
+  if (center == TRUE) {
+    common_names <- intersect(colnames(model$model.frame()), names(model$center))
+    
+    newmf <- model$model.frame()
+    # add centers
+    for (name in common_names) {
+      if (model$center[name] > 0) {
+        newmf[, name] <- model$model.frame()[, name] +  model$center[name]
+      } else {
+        newmf[, name] <- model$model.frame()[, name] - abs(model$center[name])  # Subtracting the absolute value
+      }
+    }
+    
+    model$intercept <- model$nuisance()[[model$mstop()]]$ff - 
+      mean(predict.glmboost(model, newdata = newmf))
   }
 
-  model$X <- X_ch
   model$Z <- ran_parts$Z
   model$lme4_family <- function() ran_parts$family
   model$formula <- formula
@@ -83,18 +97,25 @@ mermboost <- function(formula, data = list(),
                       offset = NULL, family = gaussian, control = boost_control(),
                       oobweights = NULL, baselearner = c("bbs", "bols", "btree", "bss", "bns"),
                       ...) {
-
+  
   data <- as.data.frame(data)
-
+  
   if (!class(family) == "boost_family") {
-    # Standardize the family input
+    # Standardize the family input; if condition since accepting NBinomial
     family <- switch(
       class(family)[1],
-      "character" = get(family),           # If a string is passed, get the family function (e.g., "binomial" -> binomial)
-      "function" = family(),               # If the function itself is passed (e.g., binomial), call it to get a family object
-      "family" = family,                   # If a family object is already passed (e.g., binomial()), just use it
-      stop("Invalid family argument")      # Throw an error for invalid input
+      "character" = get(family),
+      "function" = family(),
+      "family" = family,
+      stop("Invalid family argument")
     )
+    
+    if (inherits(family, "family") && family$family == "Gamma") {
+      if (family$link == "inverse") {
+        family <- Gamma(link = "log")
+        message("Turned into log-link since inverse-link has problems concerning risk and gradient calculations.")
+      }
+    }
   }
 
   randoms <- organise_random(formula = formula, data = data, model = "gamm")
@@ -102,12 +123,11 @@ mermboost <- function(formula, data = list(),
   ran_parts <- randoms$ran_parts
   ran_parts$family <- eval(family)
 
-  data <- check_data(data, ran_parts$id, formula = formula)
-
   # organise fixed effects
   formula_fix <- lme4::nobars(formula) # extract fix formula
-  X <- as.matrix(data[,all.vars(formula_fix[[3]])])
-
+  vars <- all.vars(formula_fix[[3]])
+  X <- create_X(data, vars)
+  
   # build correction matrix C
   Cm <- build_C(data = data, X = X, ran_parts = ran_parts)
   ran_parts$Cm <- Cm
@@ -125,15 +145,6 @@ mermboost <- function(formula, data = list(),
                   oobweights = oobweights, baselearner = baselearner,
                   ...)
 
-  X_ch <- model$model.frame()[names(coef(model))]
-  # Identify logical columns,
-  # Convert logical values to 1s and 0s
-  logical_columns <- sapply(X_ch, is.logical)
-  if (any(logical_columns)) {
-    X_ch[, logical_columns] <- X_ch[, logical_columns] + 0
-  }
-
-  model$X <- X_ch
   model$Z <- ran_parts$Z
   model$lme4_family <- function() family
   model$formula <- formula
