@@ -84,9 +84,33 @@ glmermboost <- function(formula, data = list(),
   model$fix_formula <- formula_fix
   model$id <- ran_parts$id
   model$data <- data
-
   class(model) <- c("glmermboost", "glmboost", "mboost")
-
+  
+  model$predict <- local({
+    mod <- model  # Store the model object within the local environment
+    
+    function(newdata = NULL,
+             RE = TRUE,
+             type = c("link", "response", "class"),
+             which = NULL,
+             aggregate = c("sum", "cumsum", "none"),
+             ...) {
+    
+      ret <- internalpredict.glmermboost(object = mod,
+                                         newdata = newdata,
+                                         RE = RE,
+                                         type = type,
+                                         which = which,
+                                         aggregate = aggregate,
+                                         ...)
+      
+      return(ret)
+    }
+  })
+  
+  model$fitted <- function() model$predict(type = "response")
+  
+  
   return(model)
 }
 
@@ -155,6 +179,30 @@ mermboost <- function(formula, data = list(),
   model$data <- data
 
   class(model) <- c("mermboost", "mboost")
+  
+  model$predict <- local({
+    mod <- model  # Store the model object within the local environment
+    
+    function(newdata = NULL,
+             RE = TRUE,
+             type = c("link", "response", "class"),
+             which = NULL,
+             aggregate = c("sum", "cumsum", "none"),
+             ...) {
+      
+      ret <- internalpredict.mermboost(object = mod,
+                                         newdata = newdata,
+                                         RE = RE,
+                                         type = type,
+                                         which = which,
+                                         aggregate = aggregate,
+                                         ...)
+      
+      return(ret)
+    }
+  })
+  
+  model$fitted <- function() model$predict(type = "response")
 
   return(model)
 }

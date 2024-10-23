@@ -3,7 +3,6 @@ import(parallel)
 import(stabs)
 import(lme4)
 import(Matrix)
-import(fastDummies)
 import(MASS)
 
 importFrom("graphics", "abline", "lines")
