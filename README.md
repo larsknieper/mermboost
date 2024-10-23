@@ -23,7 +23,7 @@ Technically, it is calling a newly defined family (*merMod*), in which random co
 | `mer_cvrisk()` | For individual-sensitive    | *mer_cv* class      |
 |                | Cross-validation            |                     |
 
-The function *find\\\_ccc()* takes the arguments of a dataframe and a name of a cluster-defining variable. It gives logical values corresponding to all further variables, whether or not these are constant across each cluster as this is causing the described bias. Still, by providing an estimation of random effects' covariance $\boldsymbol{Q}$ *mermboost* is a good choice for boosting mixed models even when there are no cluster constant covariates in the data set.
+The function *find_ccc()* takes the arguments of a dataframe and a name of a cluster-defining variable. It gives logical values corresponding to all further variables, whether or not these are constant across each cluster as this is causing the described bias. Still, by providing an estimation of random effects' covariance $\boldsymbol{Q}$ *mermboost* is a good choice for boosting mixed models even when there are no cluster constant covariates in the data set.
 
 The boosting functions are wrappers of the corresponding *mboost* functions. Hence, *glmerboost()* is a wrapper of *glmboost()* and *mermboost()* is a wrapper of *mboost()*. After initialising a *lme4* object, both start the corresponding *mboost* model with the *merMod* family.
 
