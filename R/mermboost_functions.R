@@ -76,7 +76,7 @@ glmermboost <- function(formula, data = list(),
     model$intercept <- model$nuisance()[[model$mstop()]]$ff - 
       mean(predict.glmboost(model, newdata = newmf))
   }
-
+  
   model$Z <- ran_parts$Z
   model$lme4_family <- function() ran_parts$family
   model$formula <- formula
@@ -321,13 +321,17 @@ mer_cvrisk <- function(object, folds, no_of_folds, cores = 1) {
       train <- object$data[train_ind,]
       test <- object$data[test_ind,]
 
-      train_mod <- mermboost(object$formula, data = train,
+      train_mod <- mermboost(object$formula, 
+                             data = train,
+                             offset = object$offset,
                              family = object$lme4_family,
                              control = object$control)
 
-      eta <- predict.mermboost(train_mod, newdata = test,
-                                 type = "link", aggregate = "cumsum",
-                                 RE = F)
+      eta <- predict.mermboost(train_mod, 
+                               newdata = test,
+                               type = "link", 
+                               aggregate = "cumsum",
+                               RE = F)
 
       aic <- c()
       for (j in 1:iter) {

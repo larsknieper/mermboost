@@ -53,7 +53,8 @@ organise_random <- function(formula, data, model) {
   data[ran_parts$id] <- as.factor(unlist(data[ran_parts$id]))
   if(class(unlist(data[ran_parts$id])) != "factor") {
     stop("Please turn the id into a factor.")
-    }
+  }
+  ran_parts$re_names <- levels(droplevels(unlist(data[ran_parts$id])))
   ran_parts$rs <- all.vars(formula_random[[1]][[2]]) # Random Slopes
   ran_parts$q <- length(ran_parts$rs) # no. of random effects
   ran_parts$int_cond <- grepl("1+", deparse(formula_random[[1]])) # is there a random intercept
@@ -63,7 +64,8 @@ organise_random <- function(formula, data, model) {
 
   # data organisation by id
   data[ran_parts$id] <- as.numeric(unlist(data[ran_parts$id])) # add id to data frame
-  if (all(data[order(data[,ran_parts$id]), ] != data)) {
+  
+  if (!all(data[order(data[,ran_parts$id]), ] == data)) {
     message("Data has been sorted by the id variable.")
     data <- data[order(data[,ran_parts$id]), ]
   }

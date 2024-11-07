@@ -106,9 +106,10 @@ as.Family.merMod <- function(object, ran_parts) {
 
     theta <<- lme4::getME(model, "theta")
     Q <<- lme4::VarCorr(model)
-
-    rf <<- matrix(C %*% as.vector(t(rf_orig)), ncol = q, byrow = T)
-
+    
+    rf <<- matrix(C %*% as.vector(t(rf_orig)), ncol = q, byrow = T,
+                  dimnames = list(ran_parts$re_names))
+    
     rf_lp <<- as.matrix(Z %*% as.vector(t(rf)))
     #lp <- ff + rf_lp
     lp <- predict(model, re.form = NA) + rf_lp
@@ -122,7 +123,7 @@ as.Family.merMod <- function(object, ran_parts) {
     m0 <<- tmp
     ### note: inherits(m0, "lm") will also be true for glms
     if (class(m0)[1] == "lm") {
-      return(m0$residuals) # here comes the deviance
+      return(m0$residuals) 
     }
 
     # when class = "lm" then nothing happens here
