@@ -2,7 +2,7 @@ Package: mermboost
 Type: Package
 Title: Gradient boosting for generalised additive mixed models
 Version: 0.1.0
-Author: Lars Knieper, Torsten Hothorn, Colin Griesbach
+Author: Lars Knieper, Torsten Hothorn, Elisabeth Bergherr, Colin Griesbach
 Maintainer: Lars Knieper <lars.knieper@uni-goettingen.de>
 Description: Offers a novel boosting framework to estimate mixed models via gradient boosting.
     The implemented functions are based on 'mboost' and 'lme4'. Hence, the family range is predetermined by 'lme4'. 

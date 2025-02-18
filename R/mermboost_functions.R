@@ -226,21 +226,35 @@ mer_cvrisk <- function(object, folds, no_of_folds, cores = 1) {
 
     un_id <- unique(object$data[object$id])
     no_of_ind <- nrow(un_id)
-    id_ind <- list()
-    for (i in 1:no_of_ind) {
-      id_ind[[i]] <- which(object$data[object$id] == i)
-    }
-
+    
+    # Shuffle IDs and split them into k folds
+    shuffled_ids <- sample(un_id)
+    fold_assignments <- split(shuffled_ids, rep(1:k, length.out = no_of_ind))
+    
+    # Create a folds matrix
     folds <- matrix(1, nrow = N, ncol = k)
-    test_ind <- list()
-    test_ind_size <- floor(no_of_ind * fold_share)
-    if (test_ind_size == 0) {stop("You might want too many folds.")}
+    
     for (i in 1:k) {
-      test_ind <- sample(1:no_of_ind, test_ind_size)
-      zero_ind <- unlist(id_ind[test_ind])
-      folds[zero_ind,i] = 0
+      test_ind <- unlist(lapply(fold_assignments[[i]], 
+                                function(id) which(object$data[object$id] == id)))
+      folds[test_ind, i] = 0  # Set test indices for fold i
     }
   }
+  #   id_ind <- list()
+  #   for (i in 1:no_of_ind) {
+  #     id_ind[[i]] <- which(object$data[object$id] == i)
+  #   }
+  # 
+  #   folds <- matrix(1, nrow = N, ncol = k)
+  #   test_ind <- list()
+  #   test_ind_size <- floor(no_of_ind * fold_share)
+  #   if (test_ind_size == 0) {stop("You might want too many folds.")}
+  #   for (i in 1:k) {
+  #     test_ind <- sample(1:no_of_ind, test_ind_size)
+  #     zero_ind <- unlist(id_ind[test_ind])
+  #     folds[zero_ind,i] = 0
+  #   }
+  # }
 
   k <- ncol(folds)
   # folds are given now
@@ -313,6 +327,7 @@ mer_cvrisk <- function(object, folds, no_of_folds, cores = 1) {
 
   } else if (class(object)[1] == "mermboost") {
     Y <- as.matrix(object$data[all.vars(object$formula[[2]])])
+    Y <- if(is.character(Y)) {as.numeric(Y)}
 
     cross_val <- function(giv_weights) {
       train_ind <- ifelse(giv_weights == 1, T, F)
@@ -326,13 +341,13 @@ mer_cvrisk <- function(object, folds, no_of_folds, cores = 1) {
                              offset = object$offset,
                              family = object$lme4_family,
                              control = object$control)
-
+      
       eta <- predict.mermboost(train_mod, 
                                newdata = test,
                                type = "link", 
                                aggregate = "cumsum",
                                RE = F)
-
+      
       aic <- c()
       for (j in 1:iter) {
         mu <- fam$linkinv(eta[,j])
