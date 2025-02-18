@@ -24,18 +24,20 @@
         type = c("link", "response", "class"), which = NULL,
         aggregate = c("sum", "cumsum", "none"), ...)
 
-\method{ranef}{mermboost} (object, iteration = mstop(object))
-\method{ranef}{glmermboost} (object, iteration = mstop(object))
+\method{ranef}{mermboost} (object, iteration = mstop(object), ...)
+\method{ranef}{glmermboost} (object, iteration = mstop(object), ...)
 
-\method{VarCorr}{mermboost}(object, iteration = mstop(object))
-\method{VarCorr}{glmermboost}(object, iteration = mstop(object))
+\method{VarCorr}{mermboost}(x, sigma=1, iteration = mstop(x), ...)
+\method{VarCorr}{glmermboost}(x, sigma=1, iteration = mstop(x), ...)
 
-\method{mstop}{mer_cv}(cv_object)
-\method{plot}{mer_cv}(cv_object, main = NULL)
+\method{mstop}{mer_cv}(object, ...)
+\method{plot}{mer_cv}(x, ...)
 }
 
 \arguments{
-  \item{object}{ objects of class \code{glmermboost}, \code{mermboost} }
+  \item{object}{ objects of class \code{glmermboost} or \code{mermboost}.
+                If you are using \code{\link{mstop}} it refers to an 
+                object resulting from  \code{\link{mer_cvrisk}}. }
   \item{newdata}{ optionally, a data frame in which to look for variables with
           which to predict. In case the model was fitted using the \code{matrix}
           interface to \code{\link{glmermboost}}, \code{newdata} must be a \code{matrix}
@@ -70,8 +72,8 @@
                     are considered.}
   \item{iteration}{ an integer input that specifies from which iteration the
                     random component is to be drawn. }
-  \item{cv_object}{ an object resulting from \code{\link{mer_cvrisk}}. }
-  \item{main}{ user specific plot header. }
+  \item{sigma}{ an argument used in \code{lme4}. Exists for technical reasons but finds no application here. }
+  \item{x}{ a cross-validation object for \code{plot} or an \code{mermboost} object for \code{VarCorr}. }
   \item{\dots}{ additional arguments passed to callies. }
 }
 

@@ -22,7 +22,7 @@ as.Family <- function(object, ...)
 }
 
 #' @export
-as.Family.merMod <- function(object, ran_parts) {
+as.Family.merMod <- function(object, ran_parts, ...) {
   q <- ran_parts$q
   id <- ran_parts$id
   Z0 <- ran_parts$Z0

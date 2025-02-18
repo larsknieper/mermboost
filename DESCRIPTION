@@ -8,6 +8,6 @@ Description: Offers a novel boosting framework to estimate mixed models via grad
     The implemented functions are based on 'mboost' and 'lme4'. Hence, the family range is predetermined by 'lme4'. 
     A correction mechanism for cluster-constant covariates is implemented as well as an estimation of random effects' covariance.
 Depends: R (>= 3.5.0), mboost, lme4,stabs
-Imports: Matrix, MASS,  parallel
+Imports: Matrix, MASS,  parallel, data.table, stringr, tibble
 License: GPL-2
 RoxygenNote: 7.3.2

@@ -83,7 +83,7 @@ Lars Knieper, Torsten Hothorn, Elisabeth Bergherr and Colin Griesbach (2025),
 \seealso{
   See \code{\link{glmermboost}} for the same approach using additive models.
 
-  See \code{\link{mer_cv}} for a cluster-sensitive cross-validation.
+  See \code{\link{mer_cvrisk}} for a cluster-sensitive cross-validation.
 }
 \examples{
 data("Orthodont")

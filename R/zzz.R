@@ -1,0 +1,1 @@
+globalVariables(c("rs", "rf_lp"))

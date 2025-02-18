@@ -10,6 +10,7 @@ importFrom("stats", "as.formula", "coef", "family", "formula",
            "gaussian", "logLik", "model.frame", "model.response",
            "na.omit", "predict", "residuals", "terms")
 importFrom("utils", "modifyList")
+importFrom("stats", "Gamma")
 
 S3method(VarCorr,glmermboost)
 S3method(VarCorr,mermboost)
