@@ -3,7 +3,7 @@
 \alias{estuaries}
 \title{Effect of pollution on marine microinvertebrates in estuaries}
 \format{
-A dataframe containing (amongst other things):\describe{
+A dataframe containing (among other things):\describe{
 \item{Mod}{A factor describing whether the sample was taken from a 'Modified' or 'Pristine' estuary.}
 \item{Zone}{Whether the sample was taken from Inner (upstream) or Outer (downstream) zone of the estuary.}
 \item{Estuary}{A factor with seven levels identifying which estuary the sample was taken from.}

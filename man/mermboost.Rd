@@ -56,7 +56,7 @@ mermboost(formula, data = list(), na.action = na.omit, weights = NULL,
 
   The base-learners can either be specified via the \code{formula} object or via
   the \code{baselearner} argument. The latter argument is the default base-learner
-  which is used for all variables in the formula, whithout explicit base-learner
+  which is used for all variables in the formula, without explicit base-learner
   specification (i.e., if the base-learners are explicitly specified in \code{formula},
   the \code{baselearner} argument will be ignored for this variable).
 
@@ -70,7 +70,7 @@ mermboost(formula, data = list(), na.action = na.omit, weights = NULL,
 \value{
   The description of \code{\link{mboost}} holds while some methods are newly implemented
   like \code{\link{predict}}, \code{\link{plot}} and \code{\link{mstop}}. Only the former one requires
-  an furhter argument. Additionally, methods  \code{\link{VarCorr}}, \code{\link{ranef}},
+  an further argument. Additionally, methods  \code{\link{VarCorr}}, \code{\link{ranef}},
   \code{\link{VarCorr}} are implemented specifically.
 }
 

@@ -35,7 +35,7 @@ mer_cvrisk(object, folds, no_of_folds, cores = 1)
   This function uses the cluster-identifier held in the \code{mermboost} object
   to split the data into cluster-sensitive folds if the corresponding argument
   \code{no_of_folds} is given.
-  As this might lead to inbalanced splits the 1/0 matrix of folds can be given manually
+  As this might lead to imbalanced splits the 1/0 matrix of folds can be given manually
   via the folds argument.
 
 }

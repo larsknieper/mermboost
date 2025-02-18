@@ -23,7 +23,7 @@
     }
     \item{Subject}{
       an ordered factor indicating the subject on which the
-      measurement was made.  The levels are labelled \code{M01}
+      measurement was made.  The levels are labeled \code{M01}
       to \code{M16} for the males and \code{F01} to \code{F13} for
       the females.  The ordering is by increasing average distance
       within sex.

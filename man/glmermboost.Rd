@@ -48,13 +48,13 @@ glmermboost(formula, data = list(), weights = NULL,
   A (generalized) linear mixed model is fitted using a boosting algorithm based on component-wise
   univariate linear models. Additionally, a mixed model gets estimated in every iteration and added
   to the current fit. The fit, i.e., the regression coefficients and random effects, can be
-  interpreted in the usual way. This particualy methodology is described in
+  interpreted in the usual way. This particular methodology is described in
   Knieper et al. (2025).
 }
 \value{
   The description of \code{\link{glmboost}} holds while some methods are newly implemented
   like \code{\link{predict}}, \code{\link{plot}} and \code{\link{mstop}}. Only the former one requires
-  an furhter argument. Additionally, methods  \code{\link{VarCorr}}, \code{\link{ranef}},
+  an further argument. Additionally, methods  \code{\link{VarCorr}}, \code{\link{ranef}},
   \code{\link{VarCorr}} are implemented specifically.
 }
 \references{
