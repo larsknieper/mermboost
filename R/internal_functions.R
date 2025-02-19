@@ -51,7 +51,7 @@ organise_random <- function(formula, data, model) {
   ran_parts <- list()
   ran_parts$id <- all.vars(formula_random[[1]][[3]]) # id variable
   data[ran_parts$id] <- as.factor(unlist(data[ran_parts$id]))
-  if(class(unlist(data[ran_parts$id])) != "factor") {
+  if(!is.factor(unlist(data[ran_parts$id]))) {
     stop("Please turn the id into a factor.")
   }
   ran_parts$re_names <- levels(droplevels(unlist(data[ran_parts$id])))
@@ -110,7 +110,7 @@ build_family <- function(ran_parts, weights) {
     family <- family()
   }
 
-  if (class(family) == "boost_family") {
+  if (inherits(family, "boost_family")) {
     if (family@name == "Negative Negative-Binomial Likelihood") {
       gm <- lme4::glmer.nb(ran_parts$mm_f, data = Z0, weights = weights)
       # Overwrite ran_parts$family in the parent environment of 'main'
@@ -118,7 +118,7 @@ build_family <- function(ran_parts, weights) {
              modifyList(ran_parts,
                         list(family =  family(gm))),
              envir = parent.frame())
-    } else if (class(family) == "boost_family_glm") {
+    } else {
       stop("Please use a R-stats family.")
     }
   } else {
@@ -339,21 +339,6 @@ dummy_cols <- function(.data,
                                        na_last = TRUE,
                                        locale = "en_US",
                                        numeric = TRUE)
-      #    unique_vals <- vals[order(match(vals, unique_vals))]
-      # if (vals$Freq[1] > vals$Freq[2]) {
-      #   vals <- as.character(vals$vals[2:nrow(vals)])
-      #   unique_vals <- unique_vals[which(unique_vals %in% vals)]
-      #   unique_vals <- vals[order(match(vals, unique_vals))]
-      # } else {
-      #   vals <- vals[vals$Freq %in% max(vals$Freq), ]
-      #   vals <- vals[stringr::str_order(vals$vals,
-      #                                   na_last = TRUE,
-      #                                   locale = "en_US",
-      #                                   numeric = TRUE)]
-      #   vals <- as.character(vals$vals[2:nrow(vals)])
-      #   unique_vals <- unique_vals[which(unique_vals %in% vals)]
-      #   unique_vals <- vals[order(match(vals, unique_vals))]
-      # }
     }
     
     if (remove_first_dummy) {

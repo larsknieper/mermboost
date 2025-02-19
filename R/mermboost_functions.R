@@ -8,7 +8,7 @@ glmermboost <- function(formula, data = list(),
 
   data <- as.data.frame(data)
   
-  if (!class(family) == "boost_family") {
+  if (!inherits(family, "boost_family")) {
     # Standardize the family input; if condition since accepting NBinomial
     family <- switch(
       class(family)[1],
@@ -124,7 +124,7 @@ mermboost <- function(formula, data = list(),
   
   data <- as.data.frame(data)
   
-  if (!class(family) == "boost_family") {
+  if (!inherits(family, "boost_family")) {
     # Standardize the family input; if condition since accepting NBinomial
     family <- switch(
       class(family)[1],

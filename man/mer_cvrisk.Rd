@@ -60,10 +60,11 @@ data(Orthodont)
 mod <- mermboost(distance ~ bbs(age, knots = 4) + bols(Sex) + (1 |Subject),
                  data = Orthodont, family = gaussian,
                  control = boost_control(mstop = 100))
-
+\donttest{
 # let mermboost do the cluster-sensitive cross-validation for you
 norm_cv <- mer_cvrisk(mod, no_of_folds = 10)
 opt_m <- mstop(norm_cv)
 plot(norm_cv)
+}
 }
 

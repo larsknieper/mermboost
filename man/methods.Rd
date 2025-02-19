@@ -36,7 +36,7 @@
 
 \arguments{
   \item{object}{ objects of class \code{glmermboost} or \code{mermboost}.
-                If you are using \code{\link{mstop}} it refers to an 
+                If you are using \code{\link{mstop.mer_cv}} it refers to an 
                 object resulting from  \code{\link{mer_cvrisk}}. }
   \item{newdata}{ optionally, a data frame in which to look for variables with
           which to predict. In case the model was fitted using the \code{matrix}
@@ -73,12 +73,12 @@
   \item{iteration}{ an integer input that specifies from which iteration the
                     random component is to be drawn. }
   \item{sigma}{ an argument used in \code{lme4}. Exists for technical reasons but finds no application here. }
-  \item{x}{ a cross-validation object for \code{plot} or an \code{mermboost} object for \code{VarCorr}. }
+  \item{x}{ a cross-validation object for \code{plot.mer_cv} or an \code{mermboost} object for \code{VarCorr.mermboost}. }
   \item{\dots}{ additional arguments passed to callies. }
 }
 
 \details{
-  The methods should correspond the the \code{mboost} and \code{lme4} functions.
+  The methods should correspond the \code{mboost} and \code{lme4} functions.
 }
 
 
@@ -99,10 +99,6 @@ data(Orthodont)
 mod <- glmermboost(distance ~ age + Sex + (1 |Subject),
                    data = Orthodont, family = gaussian,
                    control = boost_control(mstop = 50))
-
-norm_cv <- mer_cvrisk(mod, no_of_folds = 10)
-opt_m <- mstop(norm_cv)
-plot(norm_cv)
 
 any(predict(mod, RE = FALSE) == predict(mod, RE = TRUE))
 all(predict(mod, RE = FALSE) ==

@@ -28,6 +28,7 @@ as.Family.merMod <- function(object, ran_parts, ...) {
   Z0 <- ran_parts$Z0
   C <- ran_parts$Cm
   Z <- ran_parts$Z
+  rf_lp <- NULL  # Initialize globally within as.Family
   
   # object is an intercept object
   model <- object
@@ -102,7 +103,7 @@ as.Family.merMod <- function(object, ran_parts, ...) {
                        message = function(i) eval(model, env))
 
     rf_orig <- lme4::ranef(model)[[id]]
-    ff <<- lme4::fixef(model) #- mean(f)
+    ff <<- lme4::fixef(model)
 
     theta <<- lme4::getME(model, "theta")
     Q <<- lme4::VarCorr(model)
@@ -111,7 +112,7 @@ as.Family.merMod <- function(object, ran_parts, ...) {
                   dimnames = list(ran_parts$re_names))
     
     rf_lp <<- as.matrix(Z %*% as.vector(t(rf)))
-    #lp <- ff + rf_lp
+    
     lp <- predict(model, re.form = NA) + rf_lp
     assign("lp_.", lp, env)
 

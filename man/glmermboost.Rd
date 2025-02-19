@@ -34,11 +34,11 @@ glmermboost(formula, data = list(), weights = NULL,
     See \code{\link{model.matrix.default}}.}
   \item{center}{logical indicating of the predictor variables are centered before fitting.}
   \item{control}{ a list of parameters controlling the algorithm. For
-    more details see \code{\link{boost_control}}. }
+    more details see \code{\link[mboost]{boost_control}}. }
   \item{oobweights}{ an additional vector of out-of-bag weights, which is
     used for the out-of-bag risk (i.e., if \code{boost_control(risk =
       "oobag")}).}
-  \item{\dots}{ additional arguments passed to \code{\link{mboost_fit}}; currently none.}
+  \item{\dots}{ additional arguments passed to \code{\link[mboost]{mboost_fit}}; currently none.}
 }
 
 \details{
@@ -52,10 +52,7 @@ glmermboost(formula, data = list(), weights = NULL,
   Knieper et al. (2025).
 }
 \value{
-  The description of \code{\link{glmboost}} holds while some methods are newly implemented
-  like \code{\link{predict}}, \code{\link{plot}} and \code{\link{mstop}}. Only the former one requires
-  an further argument. Additionally, methods  \code{\link{VarCorr}}, \code{\link{ranef}},
-  \code{\link{VarCorr}} are implemented specifically.
+  The description of \code{\link[mboost]{glmboost}} holds while some methods are newly implemented like \code{\link{predict.mermboost}}, \code{\link{plot.mer_cv}} and \code{\link{mstop.mer_cv}}. Only the former one requires a further argument. Additionally, methods  \code{\link{VarCorr.mermboost}} and \code{\link{ranef.mermboost}}are implemented specifically.
 }
 \references{
 Lars Knieper, Torsten Hothorn, Elisabeth Bergherr and Colin Griesbach (2025),
@@ -75,6 +72,7 @@ data(Orthodont)
 # are there cluster-constant covariates?
 find_ccc(Orthodont, "Subject")
 
+\donttest{
 # fit initial model
 mod <- glmermboost(distance ~ age + Sex + (1 |Subject),
                    data = Orthodont, family = gaussian,
@@ -93,7 +91,7 @@ mod_opt <- glmermboost(distance ~ age + Sex + (1 |Subject),
 # in additional, there are some methods knwon from lme4
 ranef(mod_opt)
 VarCorr(mod_opt)
-
+}
 
 #######################
 
@@ -131,11 +129,12 @@ sim_data <- data.frame(group = group, y = y,
 sim_data$group <- as.factor(sim_data$group)
 
 
-
+\donttest{
 mod3 <- glmermboost(y ~ covariate1 + covariate2 + (1 | group),
                     data = sim_data, family = binomial())
 bin_cv <- mer_cvrisk(mod3, no_of_folds = 10)
 mstop(bin_cv)
+}
 }
 
 

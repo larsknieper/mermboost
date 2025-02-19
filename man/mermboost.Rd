@@ -28,15 +28,15 @@ mermboost(formula, data = list(), na.action = na.omit, weights = NULL,
   \item{family}{!! This is in contrast to usual mboost -
   "only" a \code{\link{family}} object is possible - except for \code{NBinomial()}.}
   \item{control}{ a list of parameters controlling the algorithm. For
-    more details see \code{\link{boost_control}}. }
+    more details see \code{\link[mboost]{boost_control}}. }
   \item{oobweights}{ an additional vector of out-of-bag weights, which is
     used for the out-of-bag risk (i.e., if \code{boost_control(risk =
       "oobag")}). This argument is also used internally by
     \code{cvrisk}. }
   \item{baselearner}{ a character specifying the component-wise base
-    learner to be used: \code{\link{bbs}} means P-splines with a
-    B-spline basis (see Schmid and Hothorn 2008), \code{\link{bols}}
-    linear models and \code{\link{btree}} boosts stumps.
+    learner to be used: \code{\link[mboost]{bbs}} means P-splines with a
+    B-spline basis (see Schmid and Hothorn 2008), \code{\link[mboost]{bols}}
+    linear models and \code{\link[mboost]{btree}} boosts stumps.
     \code{bss} and \code{bns} are deprecated.
     Component-wise smoothing splines have been considered in Buehlmann
     and Yu (2003) and Schmid and Hothorn (2008) investigate P-splines
@@ -45,7 +45,7 @@ mermboost(formula, data = list(), na.action = na.omit, weights = NULL,
     bivariate tensor product version to estimate interaction surfaces
     and spatial effects and also consider random effects base
     learners.}
-  \item{\dots}{ additional arguments passed to \code{\link{mboost_fit}}; currently none.}
+  \item{\dots}{ additional arguments passed to \code{\link[mboost]{mboost_fit}}; currently none.}
 }
 
 \details{
@@ -65,13 +65,12 @@ mermboost(formula, data = list(), na.action = na.omit, weights = NULL,
 
   Note that more base-learners (i.e., in addition to the ones provided
   via \code{baselearner}) can be specified in \code{formula}. See
-  \code{\link{baselearners}} for details.
+  \code{\link[mboost]{baselearners}} for details.
 }
 \value{
-  The description of \code{\link{mboost}} holds while some methods are newly implemented
-  like \code{\link{predict}}, \code{\link{plot}} and \code{\link{mstop}}. Only the former one requires
-  an further argument. Additionally, methods  \code{\link{VarCorr}}, \code{\link{ranef}},
-  \code{\link{VarCorr}} are implemented specifically.
+  The description of \code{\link[mboost]{mboost}} holds while some methods are newly implemented
+  like \code{\link{predict.mermboost}}, \code{\link{plot.mer_cv}} and \code{\link{mstop.mer_cv}}. Only the former one requires
+  an further argument. Additionally, methods  \code{\link{VarCorr.mermboost}} and \code{\link{ranef.mermboost}} are implemented specifically.
 }
 
 \references{
@@ -91,6 +90,7 @@ data("Orthodont")
 # are there cluster-constant covariates?
 find_ccc(Orthodont, "Subject")
 
+\donttest{
 mod <- mermboost(distance ~ bbs(age, knots = 4) + bols(Sex) + (1 |Subject),
                  data = Orthodont, family = gaussian,
                  control = boost_control(mstop = 100))
@@ -108,5 +108,6 @@ mod_opt <- mermboost(distance ~ bbs(age, knots = 4) + bols(Sex) + (1 |Subject),
 # in additional, there are some methods knwon from lme4
 ranef(mod_opt)
 VarCorr(mod_opt)
+}
 }
 
